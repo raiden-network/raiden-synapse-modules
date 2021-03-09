@@ -1,9 +1,97 @@
 version: 2.1
 
-jobs:
-  build:
-    docker: 
+executors:
+  default-executor:
+    working_directory: /home/circleci/ci/raiden-synapse-modules
+    docker:
       - image: circleci/python:3.7
+    environment:
+      PROJECT_ROOT: /home/circleci/ci/raiden-synapse-modules
+      CI_CONFIG_DIR: /home/circleci/ci/raiden-synapse-modules/.circleci
+      PYPROJECT_TOML: /home/circleci/ci/raiden-synapse-modules/pyproject.toml
+
+
+commands:
+  setup-job:
     steps:
-      - checkout # check out the code in the project directory
-      - run: echo "hello world" # run the `echo` command
+      - attach_workspace:
+          at: "/home/circleci"
+      - run:
+          name: Configure locale
+          command: |
+            echo "en_US.UTF-8 UTF-8" | sudo tee -a /etc/locale.gen
+            sudo locale-gen
+
+  install_tools_for_ci:
+    description: |
+      Install packages needed to run our scripts.
+    steps:
+      - run:
+          name: Install additional packages for CI tools
+          command: |
+            pip install -U poetry
+            echo 'export LANG=C.UTF-8' >> ${BASH_ENV}
+            echo 'export LC_ALL=C.UTF-8' >> ${BASH_ENV}
+
+  prep_venv:
+    description: Restore cache and virtualenv, and install dependencies.
+    steps:
+      - restore_cache:
+          keys:
+            - deps-v1-{{ checksum "poetry.lock" }}
+
+      - install_tools_for_ci
+
+      - run:
+          name: Install the project.
+          command: make install-dev
+
+  lint:
+    description: Run linters against our code base.
+    steps:
+      - run:
+          name: Run Linters
+          command: make lint
+
+  test:
+    description: Run unit and integration tests of our package.
+    steps:
+      - run:
+          name: Run Tests.
+          command: make tests
+
+
+  store_env:
+    description: Store our dependencies in the cache.
+    steps:
+      - save_cache:
+          key: deps-v1-{{ checksum "poetry.lock" }}
+          paths:
+            - /home/circleci/.cache/pypoetry/virtualenvs
+
+jobs:
+  lint-and-test:
+    executor: default-executor
+    steps:
+      - checkout
+      - prep_venv
+      - setup-job
+      - lint
+      - test
+      - store_env
+      - persist_to_workspace:
+          paths:
+            - ci
+          root: "/home/circleci"
+
+  finalize:
+    executor: default-executor
+    steps:
+      - run: echo "done".
+
+workflows:
+  version: 2
+
+  PR-Review-Workflow:
+    jobs:
+      - lint-and-test
