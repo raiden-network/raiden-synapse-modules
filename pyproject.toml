@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "raiden-synapse-modules"
+version = "0.0.1"
+description = "synapse modules for the Raiden network"
+authors = ["Brainbot Labs Est. <contact@brainbot.li>"]
+license = "MIT"
+keywords = ["raiden", "raiden-network", "synapse", "matrix"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+raiden-contracts = "^0.37.1"
+
+[tool.poetry.dev-dependencies]
+black = ""
+coverage = "^5.3"
+codecov = "^2.1.9"
+flake8-bugbear = "^20.1.4"
+flake8-comprehensions = "^3.2.3"
+flake8-tuple = "^0.4.1"
+flake8 = "^3.8.3"
+isort = "^5.6.4"
+matrix-synapse = "1.19.1"
+mypy = "^0.790"
+pylint = "^2.6.0"
+pytest = "^6.1.2"
+pytest-cov = "^2.10.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+line_length = 99
+known_future_library = "future"
+known_first_party = "raiden_contracts"
+default_section = "THIRDPARTY"
+combine_as_imports = true
+# black compatibility
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+
+[tool.black]
+line-length = 99
+target-version = ['py37']
+include = '\.pyi?$'
+exclude = '''
+/(
+   \.git
+ | \.mypy_cache
+ | \.venv
+ | build
+ | dist
+)/
+'''
