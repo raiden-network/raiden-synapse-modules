@@ -1,4 +1,2 @@
-def test_eth_tester(blockchain):
-    assert blockchain.get_balance(
-        blockchain.get_accounts()[0]
-    ) == 1000000000000000000000000
+def test_service_registry(web3, service_registry):
+    assert service_registry is not None
