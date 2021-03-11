@@ -1,10 +1,9 @@
-from typing import Any, Dict, cast
+from typing import Dict, Tuple, cast
 
 from eth_typing import Address
 from eth_utils import to_checksum_address
-from eth_utils.abi import event_abi_to_log_topic
 from web3 import Web3
-from web3._utils.abi import filter_by_type
+from web3._utils.filters import Filter
 from web3.contract import Contract
 from web3.types import BlockIdentifier
 
@@ -49,24 +48,9 @@ def read_initial_services_addresses(
     return services_addresses
 
 
-def setup_event_filter(service_registry_address: Address) -> Dict[str, Any]:
-    """
-    Create an event filter for the log topic of `ServiceRegistry::RegisteredService`.
-    """
-    abi = ContractManager(contracts_precompiled_path()).get_contract_abi(CONTRACT_SERVICE_REGISTRY)
-    service_registered_abi = cast(
-        Dict,
-        next(
-            filter(
-                lambda event: event["name"] == EVENT_REGISTERED_SERVICE,
-                filter_by_type("event", abi),
-            )
-        ),
+def install_filters(service_registry: Contract) -> Tuple[Filter, Filter]:
+    block_filter = service_registry.web3.eth.filter("latest")
+    event_filter = getattr(service_registry.events, EVENT_REGISTERED_SERVICE).createFilter(
+        fromBlock=0
     )
-    EVENT_REGISTERED_SERVICE_TOPIC = "0x" + event_abi_to_log_topic(service_registered_abi).hex()
-    return {
-        "fromBlock": 0,
-        "toBlock": "latest",
-        "address": to_checksum_address(service_registry_address),
-        "topics": [EVENT_REGISTERED_SERVICE_TOPIC],
-    }
+    return (block_filter, cast(Filter, event_filter))
