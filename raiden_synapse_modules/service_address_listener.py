@@ -12,6 +12,9 @@ from raiden_contracts.contract_manager import ContractManager, contracts_precomp
 
 
 def setup_contract_from_address(service_registry_address: Address, w3: Web3) -> Contract:
+    """
+    Setup Contract object for the ServiceRegistry.sol contract at the given address.
+    """
     service_registry: Contract
     abi = ContractManager(contracts_precompiled_path()).get_contract_abi(CONTRACT_SERVICE_REGISTRY)
     service_registry = w3.eth.contract(
@@ -49,6 +52,9 @@ def read_initial_services_addresses(
 
 
 def install_filters(service_registry: Contract) -> Tuple[Filter, Filter]:
+    """
+    Install eth filters for new Block and `ServiceRegistry.sol::RegisteredService` events.
+    """
     block_filter = service_registry.web3.eth.filter("latest")
     event_filter = getattr(service_registry.events, EVENT_REGISTERED_SERVICE).createFilter(
         fromBlock=0
