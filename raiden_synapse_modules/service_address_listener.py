@@ -1,8 +1,21 @@
 from typing import Dict
 
 from eth_typing import Address
+from eth_utils import to_checksum_address
+from web3 import Web3
 from web3.contract import Contract
 from web3.types import BlockIdentifier
+
+from raiden_contracts.contract_manager import ContractManager, contracts_precompiled_path
+
+
+def setup_contract_from_address(service_registry_address: Address, w3: Web3) -> Contract:
+    service_registry: Contract
+    abi = ContractManager(contracts_precompiled_path()).get_contract_abi("ServiceRegistry")
+    service_registry = w3.eth.contract(
+        abi=abi, address=to_checksum_address(service_registry_address)
+    )
+    return service_registry
 
 
 def read_initial_services_addresses(
