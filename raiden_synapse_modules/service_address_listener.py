@@ -1,12 +1,14 @@
-from typing import Dict
+from typing import Any, Dict, cast
 
 from eth_typing import Address
 from eth_utils import to_checksum_address
+from eth_utils.abi import event_abi_to_log_topic
 from web3 import Web3
+from web3._utils.abi import filter_by_type
 from web3.contract import Contract
 from web3.types import BlockIdentifier
 
-from raiden_contracts.constants import CONTRACT_SERVICE_REGISTRY
+from raiden_contracts.constants import CONTRACT_SERVICE_REGISTRY, EVENT_REGISTERED_SERVICE
 from raiden_contracts.contract_manager import ContractManager, contracts_precompiled_path
 
 
@@ -45,3 +47,26 @@ def read_initial_services_addresses(
                     block_identifier=block_identifier
                 )
     return services_addresses
+
+
+def setup_event_filter(service_registry_address: Address) -> Dict[str, Any]:
+    """
+    Create an event filter for the log topic of `ServiceRegistry::RegisteredService`.
+    """
+    abi = ContractManager(contracts_precompiled_path()).get_contract_abi(CONTRACT_SERVICE_REGISTRY)
+    service_registered_abi = cast(
+        Dict,
+        next(
+            filter(
+                lambda event: event["name"] == EVENT_REGISTERED_SERVICE,
+                filter_by_type("event", abi),
+            )
+        ),
+    )
+    EVENT_REGISTERED_SERVICE_TOPIC = "0x" + event_abi_to_log_topic(service_registered_abi).hex()
+    return {
+        "fromBlock": 0,
+        "toBlock": "latest",
+        "address": to_checksum_address(service_registry_address),
+        "topics": [EVENT_REGISTERED_SERVICE_TOPIC],
+    }
