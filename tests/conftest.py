@@ -13,6 +13,7 @@ from raiden_contracts.tests.fixtures.base import (
     get_accounts,
     patch_genesis_gas_limit,
     web3,
+    auto_revert_chain,
 )
 from raiden_contracts.tests.fixtures.contracts import (
     deploy_contract,
@@ -25,13 +26,14 @@ from raiden_contracts.tests.utils.constants import SERVICE_DEPOSIT
 from raiden_contracts.tests.utils.contracts import call_and_transact
 
 
-@pytest.fixture(name="number_of_services")
+@pytest.fixture(name="number_of_services", scope="function")
 def three():
     return 3
 
 
 @pytest.fixture(
     name="service_registry_with_deposits",
+    scope="function"
 )
 def service_registry_with_deposits(
     service_registry: Contract,  # noqa: F811
