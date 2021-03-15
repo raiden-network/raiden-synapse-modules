@@ -6,6 +6,12 @@ from eth_utils import to_canonical_address, to_checksum_address
 from synapse.config import ConfigError  # type: ignore
 from synapse.handlers.presence import UserPresenceState  # type: ignore
 from synapse.module_api import ModuleApi  # type: ignore
+from web3 import Web3
+
+from raiden_synapse_modules.service_address_listener import (
+    read_initial_services_addresses,
+    setup_contract_from_address,
+)
 
 
 class PFSPresenceRouterConfig:
@@ -25,9 +31,18 @@ class PFSPresenceRouter:
     """
 
     def __init__(self, config: PFSPresenceRouterConfig, module_api: ModuleApi):
-        self._config = config
         self._module_api = module_api
-        self.registered_services: Dict[Address, int]
+        self._config = config
+
+        provider = Web3.HTTPProvider(self._config.ethereum_rpc)
+        self.web3 = Web3(provider)
+        self.registry = setup_contract_from_address(
+            self._config.service_registry_address, self.web3
+        )
+        self.registered_services: Dict[Address, int] = read_initial_services_addresses(
+            self.registry
+        )
+        self.next_timeout = min(self.registered_services.values())
 
     @staticmethod
     def parse_config(config_dict: dict) -> PFSPresenceRouterConfig:

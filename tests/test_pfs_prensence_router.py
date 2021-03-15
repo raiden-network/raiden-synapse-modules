@@ -1,4 +1,5 @@
 import pytest
+from eth_utils import to_checksum_address
 from synapse.config import ConfigError  # type: ignore
 from raiden_synapse_modules.pfs_presence_router import PFSPresenceRouter
 
@@ -29,5 +30,9 @@ def test_parse_config() -> None:
             "ethereum_rpc": "http://foo.bar"
         }
     )
-    assert config.service_registry_address == "0x1234567890123456789012345678901234567890"
+    assert (
+        to_checksum_address(
+            config.service_registry_address
+        ) == "0x1234567890123456789012345678901234567890"
+    )
     assert config.ethereum_rpc == "http://foo.bar"
