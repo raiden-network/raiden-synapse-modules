@@ -1,6 +1,8 @@
 from typing import Dict, Iterable, Set
+from urllib.parse import urlparse
 
 from eth_typing import Address
+from eth_utils import to_canonical_address, to_checksum_address
 from synapse.config import ConfigError  # type: ignore
 from synapse.handlers.presence import UserPresenceState  # type: ignore
 from synapse.module_api import ModuleApi  # type: ignore
@@ -8,7 +10,7 @@ from synapse.module_api import ModuleApi  # type: ignore
 
 class PFSPresenceRouterConfig:
     def __init__(self):
-        # Config options with their defaults
+        # Config options
         self.service_registry_address: Address
         self.ethereum_rpc: str
 
@@ -39,13 +41,26 @@ class PFSPresenceRouter:
             A validated config object.
         """
         # Initialise a typed config object
-        config = PFSPresenceRouterConfig()
-        assert config_dict is not None
+        config = PFSPresenceRouterConfig()  # type: ignore
+        service_registry_address = config_dict.get("service_registry_address")
+        ethereum_rpc = config_dict.get("ethereum_rpc")
 
-        if True:
-            pass
+        if service_registry_address is None:
+            raise ConfigError("`service_registry_address` not properly configured")
         else:
-            raise ConfigError("Not properly configured")
+            try:
+                config.service_registry_address = to_canonical_address(
+                    to_checksum_address(service_registry_address)
+                )
+            except ValueError:
+                raise ConfigError("`service_registry_address` is not a valid address")
+        if ethereum_rpc is None:
+            raise ConfigError("`ethereum_rpc` not properly configured")
+        parsed = urlparse(ethereum_rpc)
+        if not all([parsed.scheme, parsed.netloc]):
+            raise ConfigError("`ethereum_rpc` is not properly configured")
+        else:
+            config.ethereum_rpc = ethereum_rpc
 
         return config
 
