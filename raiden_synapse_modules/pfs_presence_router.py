@@ -19,6 +19,7 @@ class PFSPresenceRouterConfig:
         # Config options
         self.service_registry_address: Address
         self.ethereum_rpc: str
+        self.blockchain_sync: int
 
 
 class PFSPresenceRouter:
@@ -59,6 +60,11 @@ class PFSPresenceRouter:
         config = PFSPresenceRouterConfig()  # type: ignore
         service_registry_address = config_dict.get("service_registry_address")
         ethereum_rpc = config_dict.get("ethereum_rpc")
+        blockchain_sync = config_dict.get("blockchain_sync_seconds", "15")
+        try:
+            config.blockchain_sync = int(blockchain_sync)
+        except ValueError:
+            raise ConfigError("`blockchain_sync_seconds` needs to be an integer")
 
         if service_registry_address is None:
             raise ConfigError("`service_registry_address` not properly configured")
