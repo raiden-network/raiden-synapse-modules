@@ -1,17 +1,23 @@
-from typing import Dict, Iterable, Set
+import logging
+from collections import defaultdict
+from typing import Dict, Iterable, List, Literal, Optional, Set, Union
 from urllib.parse import urlparse
 
 from eth_typing import Address
 from eth_utils import to_canonical_address, to_checksum_address
+from hexbytes import HexBytes
 from synapse.config import ConfigError  # type: ignore
 from synapse.handlers.presence import UserPresenceState  # type: ignore
 from synapse.module_api import ModuleApi  # type: ignore
+from synapse.types import UserID  # type: ignore
 from web3 import Web3
 
 from raiden_synapse_modules.service_address_listener import (
     read_initial_services_addresses,
     setup_contract_from_address,
 )
+
+log = logging.getLogger(__name__)
 
 
 class PFSPresenceRouterConfig:
@@ -25,6 +31,24 @@ class PFSPresenceRouterConfig:
 class PFSPresenceRouter:
     """An implementation of synapse.presence_router.PresenceRouter.
     Supports routing all presence to all registered service providers.
+
+    Basic flow:
+        - on startup
+            - read all registered services
+            - check for local service users
+            - send ALL presences to local service users
+        - every config.blockchain_sync_seconds
+            - check for new filter hits (RegisteredService, Block)
+        - on RegisteredService
+            - update registered_services
+            - recompile local service users
+            - send ALL presences to new service users
+        - on Block
+            - check block.timestamp against next_expiry
+        - on expired services
+            - update registered_services
+            - recompile local service users
+
 
     Args:
         config: A configuration object.
@@ -43,7 +67,10 @@ class PFSPresenceRouter:
         self.registered_services: Dict[Address, int] = read_initial_services_addresses(
             self.registry
         )
-        self.next_timeout = min(self.registered_services.values())
+        self.next_expiry = min(self.registered_services.values())
+        self.local_users: List[UserID] = []
+        self.update_local_users()
+        self.send_current_presences_to(self.local_users)
 
     @staticmethod
     def parse_config(config_dict: dict) -> PFSPresenceRouterConfig:
@@ -100,6 +127,80 @@ class PFSPresenceRouter:
           receive.
         """
         assert state_updates is not None
-        destination_users: Dict[str, Set[UserPresenceState]] = {}
-
+        destination_users: Dict[str, Set[UserPresenceState]] = defaultdict(set)
+        for state_update in state_updates:
+            for user in self.local_users:
+                destination_users[user].union({state_update})
         return destination_users
+
+    async def get_interested_users(self, user_id: str) -> Union[Set[str], Literal["ALL"]]:
+        """
+        Retrieve a list of users that `user_id` is interested in receiving the
+        presence of. This will be in addition to those they share a room with.
+
+        Optionally, the literal str "ALL" can be returned to indicate that this user
+        should receive all incoming local and remote presence updates.
+
+        Note that this method will only be called for local users.
+
+        Args:
+          user_id: A user requesting presence updates.
+
+        Returns:
+          A set of user IDs to return additional presence updates for, or "ALL" to return
+          presence updates for all other users.
+        """
+        if user_id in self.local_users:
+            return "ALL"
+        else:
+            return set()
+
+    def send_current_presences_to(self, users: List[UserID]) -> None:
+        """Send all presences to users."""
+        raise NotImplementedError
+
+    def on_registered_service(self, service_address: Address, expiry: int) -> None:
+        """Called, when there is a new RegisteredService event on the blockchain."""
+        # service_address is already known, update the expiry
+        if service_address in self.registered_services:
+            self.registered_services[service_address] = expiry
+        # new service, add and send current presences
+        else:
+            self.registered_services[service_address] = expiry
+            local_user = self.to_local_user(service_address)
+            if local_user is not None:
+                self.local_users.append(local_user)
+                self.send_current_presences_to([local_user])
+
+    def on_new_block(self, blockhash: HexBytes) -> None:
+        """Called, when there is a new Block on the blockchain."""
+        timestamp: int = self.web3.eth.getBlock(blockhash)["timestamp"]
+        if timestamp > self.next_expiry:
+            self.expire_services(timestamp)
+            self.next_expiry = min(self.registered_services.values())
+
+    def expire_services(self, timestamp: int) -> None:
+        registered_services: Dict[Address, int] = {}
+        for address, expiry in self.registered_services.items():
+            if expiry > timestamp:
+                registered_services[address] = expiry
+        self.registered_services = registered_services
+        self.update_local_users()
+
+    def update_local_users(self) -> None:
+        """Probe all `self.registered_services` addresses for a local UserID and update
+        `self.local_users` accordingly.
+        """
+        local_users: List[UserID] = []
+        for address in self.registered_services.keys():
+            candidate = self.to_local_user(address)
+            if candidate is not None:
+                local_users.append(candidate)
+        self.local_users = local_users
+
+    def to_local_user(self, address: Address) -> Optional[UserID]:
+        """Create a UserID for a local user from a registered service address."""
+        user_id = self._module_api.get_qualified_user_id(to_checksum_address(address))
+        if self._module_api.check_user_exists(user_id):
+            return user_id
+        return None
