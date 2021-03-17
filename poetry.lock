@@ -53,7 +53,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 name = "automat"
 version = "20.2.0"
 description = "Self-service finite-state machines for the programmer on the go."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -79,7 +79,7 @@ tests = ["pytest (>=4.6)", "pytest-flake8", "pytest-cov", "PyHamcrest (>=2.0.2)"
 name = "bcrypt"
 version = "3.2.0"
 description = "Modern password hashing for your software and your servers"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -133,7 +133,7 @@ python-versions = "*"
 name = "bleach"
 version = "3.3.0"
 description = "An easy safelist-based HTML-sanitizing tool."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -154,7 +154,7 @@ python-versions = "*"
 name = "canonicaljson"
 version = "1.4.0"
 description = "Canonical JSON"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "~=3.5"
 
@@ -233,7 +233,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "constantly"
 version = "15.1.0"
 description = "Symbolic constants in Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -252,7 +252,7 @@ toml = ["toml"]
 name = "cryptography"
 version = "3.4.6"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -530,7 +530,7 @@ six = "*"
 name = "frozendict"
 version = "1.2"
 description = "An immutable dictionary"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -552,7 +552,7 @@ test = ["pytest (==5.4.1)", "pytest-xdist", "tox (==3.14.6)", "hypothesis (>=3.4
 name = "hyperlink"
 version = "21.0.0"
 description = "A featureful, immutable, and correct URL for Python."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -587,7 +587,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 name = "incremental"
 version = "21.3.0"
 description = "A small library that versions your Python projects."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -631,7 +631,7 @@ colors = ["colorama (>=0.4.3,<0.5.0)"]
 name = "jinja2"
 version = "2.11.3"
 description = "A very fast and expressive template engine."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -679,7 +679,7 @@ python-versions = "*"
 name = "markupsafe"
 version = "1.1.1"
 description = "Safely add untrusted strings to HTML/XML markup."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 
@@ -687,7 +687,7 @@ python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 name = "matrix-synapse"
 version = "1.29.0"
 description = "Reference homeserver for the Matrix decentralised comms protocol"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "~=3.5"
 develop = false
@@ -722,7 +722,7 @@ unpaddedbase64 = ">=1.1.0"
 
 [package.extras]
 acme = ["txacme (>=0.9.2)", "eliot (<1.8.0)"]
-all = ["pyjwt (>=1.6.4)", "sentry-sdk (>=0.7.2)", "authlib (>=0.14.0)", "opentracing (>=2.2.0)", "matrix-synapse-ldap3 (>=0.1)", "hiredis", "txacme (>=0.9.2)", "jaeger-client (>=4.0.0)", "lxml (>=3.5.0)", "txredisapi (>=1.4.7)", "psycopg2 (>=2.8)", "psycopg2cffi-compat (==1.1)", "psycopg2cffi (>=2.8)", "eliot (<1.8.0)", "pysaml2 (>=4.5.0,<6.4.0)", "pysaml2 (>=4.5.0)"]
+all = ["lxml (>=3.5.0)", "jaeger-client (>=4.0.0)", "matrix-synapse-ldap3 (>=0.1)", "hiredis", "authlib (>=0.14.0)", "opentracing (>=2.2.0)", "txredisapi (>=1.4.7)", "sentry-sdk (>=0.7.2)", "txacme (>=0.9.2)", "pyjwt (>=1.6.4)", "psycopg2 (>=2.8)", "psycopg2cffi-compat (==1.1)", "psycopg2cffi (>=2.8)", "eliot (<1.8.0)", "pysaml2 (>=4.5.0,<6.4.0)", "pysaml2 (>=4.5.0)"]
 jwt = ["pyjwt (>=1.6.4)"]
 lint = ["isort (==5.7.0)", "black (==20.8b1)", "flake8-comprehensions", "flake8"]
 matrix-synapse-ldap3 = ["matrix-synapse-ldap3 (>=0.1)"]
@@ -741,7 +741,7 @@ url_preview = ["lxml (>=3.5.0)"]
 type = "git"
 url = "https://github.com/matrix-org/synapse.git"
 reference = "anoa/presence_hook"
-resolved_reference = "b1709e90b1bb5a2c0944c3c0439dba16d0a512cf"
+resolved_reference = "d013bf92133e58abc1902a2b98d1e380cdbe10d1"
 
 [[package]]
 name = "mccabe"
@@ -755,7 +755,7 @@ python-versions = "*"
 name = "msgpack"
 version = "1.0.2"
 description = "MessagePack (de)serializer."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -809,7 +809,7 @@ python-versions = "*"
 name = "packaging"
 version = "20.9"
 description = "Core utilities for Python packages"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -839,7 +839,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "phonenumbers"
 version = "8.12.19"
 description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -847,7 +847,7 @@ python-versions = "*"
 name = "pillow"
 version = "8.1.2"
 description = "Python Imaging Library (Fork)"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -869,7 +869,7 @@ dev = ["pre-commit", "tox"]
 name = "prometheus-client"
 version = "0.9.0"
 description = "Python client for the Prometheus monitoring system."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -897,16 +897,22 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "py-ecc"
-version = "1.4.7"
+version = "4.1.0"
 description = "Elliptic curve crypto in python including secp256k1 and alt_bn128"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.5, <4"
 
+[package.dependencies]
+cached-property = ">=1.5.1,<2"
+eth-typing = ">=2.1.0,<3.0.0"
+eth-utils = ">=1.3.0,<2"
+mypy-extensions = ">=0.4.1"
+
 [package.extras]
-dev = ["bumpversion (>=0.5.3,<1)", "twine", "pytest (==3.2.2)", "pytest-xdist", "flake8 (==3.4.1)", "mypy (==0.641)"]
-lint = ["flake8 (==3.4.1)", "mypy (==0.641)"]
-test = ["pytest (==3.2.2)", "pytest-xdist"]
+dev = ["bumpversion (>=0.5.3,<1)", "twine", "pytest (==3.10.1)", "pytest-xdist (==1.26.0)", "flake8 (==3.5.0)", "mypy (==0.641)", "mypy-extensions (>=0.4.1)"]
+lint = ["flake8 (==3.5.0)", "mypy (==0.641)", "mypy-extensions (>=0.4.1)"]
+test = ["pytest (==3.10.1)", "pytest-xdist (==1.26.0)"]
 
 [[package]]
 name = "py-evm"
@@ -940,21 +946,22 @@ lint = ["flake8 (==3.8.2)", "flake8-bugbear (==20.1.4)", "mypy (==0.782)"]
 test = ["factory-boy (==2.11.1)", "hypothesis (>=5,<6)", "pexpect (>=4.6,<5)", "pytest (>=5.1.3,<6)", "pytest-asyncio (>=0.10.0,<0.11)", "pytest-cov (==2.5.1)", "pytest-watch (>=4.1.0,<5)", "pytest-xdist (==1.31.0)"]
 
 [[package]]
-name = "py-solc"
-version = "3.2.0"
-description = "Python wrapper around the solc binary"
+name = "py-solc-x"
+version = "1.1.0"
+description = "Python wrapper and version management tool for the solc Solidity compiler."
 category = "main"
 optional = false
-python-versions = ">=3.4, <4"
+python-versions = ">=3.6, <4"
 
 [package.dependencies]
-semantic-version = ">=2.6.0"
+requests = ">=2.19.0,<3"
+semantic-version = ">=2.8.1,<3"
 
 [[package]]
 name = "pyasn1"
 version = "0.4.8"
 description = "ASN.1 types and codecs"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -962,7 +969,7 @@ python-versions = "*"
 name = "pyasn1-modules"
 version = "0.2.8"
 description = "A collection of ASN.1-based protocols modules."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1031,7 +1038,7 @@ docs = ["sphinx (==3.5.1)", "python-docs-theme (==2020.12)"]
 name = "pymacaroons"
 version = "0.13.0"
 description = "Macaroon library for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1043,7 +1050,7 @@ six = ">=1.8.0"
 name = "pynacl"
 version = "1.4.0"
 description = "Python binding to the Networking and Cryptography (NaCl) library"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -1059,7 +1066,7 @@ tests = ["pytest (>=3.2.1,!=3.3.0)", "hypothesis (>=3.27.0)"]
 name = "pyopenssl"
 version = "20.0.1"
 description = "Python wrapper module around the OpenSSL library"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*"
 
@@ -1075,7 +1082,7 @@ test = ["flaky", "pretend", "pytest (>=3.0.1)"]
 name = "pyparsing"
 version = "2.4.7"
 description = "Python parsing module"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -1155,13 +1162,13 @@ python-versions = "*"
 name = "pyyaml"
 version = "5.4.1"
 description = "YAML parser and emitter for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [[package]]
 name = "raiden-contracts"
-version = "0.37.1"
+version = "0.37.2"
 description = "Raiden contracts library and utilities"
 category = "main"
 optional = false
@@ -1174,8 +1181,7 @@ eth-abi = ">=2.0.0,<3.0.0"
 eth-typing = ">=2.2.1,<3.0.0"
 eth-utils = ">=1.8.4,<2.0.0"
 mypy-extensions = "0.4.3"
-py-ecc = "<=1.5.0"
-py-solc = ">=3.0.0"
+py-solc-x = "*"
 rlp = ">=1.0.0"
 semver = "*"
 web3 = ">=5.7.0,<6.0.0"
@@ -1244,7 +1250,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "service-identity"
 version = "18.1.0"
 description = "Service identity verification for pyOpenSSL & cryptography."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1264,7 +1270,7 @@ tests = ["coverage (>=4.2.0)", "pytest"]
 name = "signedjson"
 version = "1.1.1"
 description = "Sign JSON with Ed25519 signatures"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1279,7 +1285,7 @@ unpaddedbase64 = ">=1.0.1"
 name = "simplejson"
 version = "3.17.2"
 description = "Simple, fast, extensible JSON encoder/decoder for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.5, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -1295,7 +1301,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "sortedcontainers"
 version = "2.3.0"
 description = "Sorted Containers -- Sorted List, Sorted Dict, Sorted Set"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1319,7 +1325,7 @@ python-versions = ">=3.5"
 name = "treq"
 version = "21.1.0"
 description = "High-level Twisted HTTP Client API"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*"
 
@@ -1359,7 +1365,7 @@ test = ["hypothesis (>=5.10.4,<6)", "pycryptodome", "pytest-xdist (>=1.31.0,<2)"
 name = "twisted"
 version = "21.2.0"
 description = "An asynchronous networking framework written in Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.5.4"
 
@@ -1393,7 +1399,7 @@ windows_platform = ["pywin32 (!=226)", "cython-test-exception-raiser (>=1.0,<2.0
 name = "twisted-iocpsupport"
 version = "1.0.1"
 description = "An extension for use in the twisted I/O Completion Ports reactor."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1417,7 +1423,7 @@ python-versions = "*"
 name = "unpaddedbase64"
 version = "2.1.0"
 description = "Encode and decode Base64 without \"=\" padding"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6,<4.0"
 
@@ -1476,7 +1482,7 @@ tester = ["eth-tester[py-evm] (==v0.5.0-beta.2)", "py-geth (>=2.4.0,<3)"]
 name = "webencodings"
 version = "0.5.1"
 description = "Character encoding aliases for legacy web content"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1512,7 +1518,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 name = "zope.interface"
 version = "5.2.0"
 description = "Interfaces for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -1524,7 +1530,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "bc692418793ad87a858304bf414da96498c36cec6016f5d714d343c6a4274b7f"
+content-hash = "1df69ee5c55b519886b5dd1217469b13de29507cd72ebae5edde1964f9c085fb"
 
 [metadata.files]
 appdirs = [
@@ -2067,16 +2073,16 @@ py = [
     {file = "py-1.10.0.tar.gz", hash = "sha256:21b81bda15b66ef5e1a777a21c4dcd9c20ad3efd0b3f817e7a809035269e1bd3"},
 ]
 py-ecc = [
-    {file = "py_ecc-1.4.7-py3-none-any.whl", hash = "sha256:67577529be4839cfc1a6ded58942ef1fb146d70d12bfcf2c202c35ced47fc1c6"},
-    {file = "py_ecc-1.4.7.tar.gz", hash = "sha256:96d14264962efc52fb359c5e62f8d697c76489156b167ebc5ea7a7a12bb59749"},
+    {file = "py_ecc-4.1.0-py3-none-any.whl", hash = "sha256:2b50b4098805eb40d2e06e682c3e7cd2c99cc4ca77fd088aab535a87eb2ac3be"},
+    {file = "py_ecc-4.1.0.tar.gz", hash = "sha256:7b26f4bb213c489967a01b526ca77087cc213626869ecbe838dfc217ef7a99ec"},
 ]
 py-evm = [
     {file = "py-evm-0.3.0a20.tar.gz", hash = "sha256:de9d1de9915c70efa8dc87ab00d4f0f7329ce65f1d8963133dd74bb90dff3e03"},
     {file = "py_evm-0.3.0a20-py3-none-any.whl", hash = "sha256:8890f6b3e30af3cf600f58ec4b80d6c5f7f6df9b48ab9faa8a447250846ac2b1"},
 ]
-py-solc = [
-    {file = "py-solc-3.2.0.tar.gz", hash = "sha256:82095bdac661072f48cf2daf8a96bdb625674330d92b225be26043e8d3ef8c9a"},
-    {file = "py_solc-3.2.0-py3-none-any.whl", hash = "sha256:9ec0bc36ef22a9b0f5642e7846999c4485fa2fa562a61897aeb0a4ca53d60153"},
+py-solc-x = [
+    {file = "py-solc-x-1.1.0.tar.gz", hash = "sha256:af7ad73d4b0b282adfb7ec88a5493d42b9b56dd0933cd2e09e8893a0868cfa69"},
+    {file = "py_solc_x-1.1.0-py3-none-any.whl", hash = "sha256:45e022241355ceb074f6910eb20daf0dae5065bdc5a435bf54c3db7cc61e1239"},
 ]
 pyasn1 = [
     {file = "pyasn1-0.4.8-py2.4.egg", hash = "sha256:fec3e9d8e36808a28efb59b489e4528c10ad0f480e57dcc32b4de5c9d8c9fdf3"},
@@ -2273,8 +2279,8 @@ pyyaml = [
     {file = "PyYAML-5.4.1.tar.gz", hash = "sha256:607774cbba28732bfa802b54baa7484215f530991055bb562efbed5b2f20a45e"},
 ]
 raiden-contracts = [
-    {file = "raiden-contracts-0.37.1.tar.gz", hash = "sha256:dd7ffaaf686047eb9059fb2b88e78edd14b017807e7720b3dbf97396c62509a4"},
-    {file = "raiden_contracts-0.37.1-py3-none-any.whl", hash = "sha256:28e7dcb171dd773d70954436ef104b2caec2667352c623d421148d1cf68070f1"},
+    {file = "raiden-contracts-0.37.2.tar.gz", hash = "sha256:8eb892672c94968441cdb47c4ffb80dc1001aef02d7a0e18d75f8aff31706773"},
+    {file = "raiden_contracts-0.37.2-py3-none-any.whl", hash = "sha256:43250079d42ce05fd88517250f341125dab903a05996e8b9f15258ba3affffda"},
 ]
 regex = [
     {file = "regex-2020.11.13-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:8b882a78c320478b12ff024e81dc7d43c1462aa4a3341c754ee65d857a521f85"},
