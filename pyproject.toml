@@ -9,9 +9,9 @@ keywords = ["raiden", "raiden-network", "synapse", "matrix"]
 [tool.poetry.dependencies]
 python = "^3.7"
 raiden-contracts = "^0.37.1"
-matrix-synapse = { git = "https://github.com/matrix-org/synapse.git", branch = "anoa/presence_hook" }
 
 [tool.poetry.dev-dependencies]
+matrix-synapse = { git = "https://github.com/matrix-org/synapse.git", branch = "anoa/presence_hook" }
 black = ""
 coverage = "^5.3"
 codecov = "^2.1.9"
