@@ -9,6 +9,7 @@ keywords = ["raiden", "raiden-network", "synapse", "matrix"]
 [tool.poetry.dependencies]
 python = "^3.7"
 raiden-contracts = "^0.37.1"
+matrix-synapse = { git = "https://github.com/matrix-org/synapse.git", branch = "anoa/presence_hook" }
 
 [tool.poetry.dev-dependencies]
 black = ""
@@ -19,7 +20,6 @@ flake8-comprehensions = "^3.2.3"
 flake8-tuple = "^0.4.1"
 flake8 = "^3.8.3"
 isort = "^5.6.4"
-matrix-synapse = "1.19.1"
 mypy = "^0.790"
 pylint = "^2.6.0"
 pytest = "^6.1.2"
