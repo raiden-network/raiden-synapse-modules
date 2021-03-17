@@ -1,6 +1,5 @@
 import logging
 import time
-from collections import defaultdict
 from typing import Dict, Iterable, List, Literal, Optional, Set, Union, cast
 from urllib.parse import urlparse
 
@@ -82,7 +81,6 @@ class PFSPresenceRouter:
         self._module_api._hs.clock.looping_call(
             self.check_filters, self._config.blockchain_sync * 1000
         )
-        self.last_update = time.time()
 
     @staticmethod
     def parse_config(config_dict: dict) -> PFSPresenceRouterConfig:
@@ -138,20 +136,9 @@ class PFSPresenceRouter:
           A dictionary of user_id -> set of UserPresenceState that the user should
           receive.
         """
-        assert state_updates is not None
-        destination_users: Dict[str, Set[UserPresenceState]] = defaultdict(set)
-        for state_update in state_updates:
-            for user in self.local_users:
-                destination_users[user].union({state_update})
-        time_since_last_blockchain_sync = time.time() - self.last_update
-        if time_since_last_blockchain_sync > (2 * self._config.blockchain_sync):
-            log.error(
-                f"Last blockchain sync was {time_since_last_blockchain_sync} seconds"
-                "ago, rescheduling sync."
-            )
-            self._module_api._hs.clock.looping_call(
-                self.check_filters, self._config.blockchain_sync * 1000
-            )
+        destination_users: Dict[str, Set[UserPresenceState]] = {}
+        for user in self.local_users:
+            destination_users[user] = set(state_updates)
         return destination_users
 
     async def get_interested_users(self, user_id: str) -> Union[Set[str], Literal["ALL"]]:
