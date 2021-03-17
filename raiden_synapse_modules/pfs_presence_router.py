@@ -187,7 +187,7 @@ class PFSPresenceRouter:
 
     def send_current_presences_to(self, users: List[UserID]) -> None:
         """Send all presences to users."""
-        raise NotImplementedError
+        self._module_api.send_local_online_presence_to(users)
 
     def on_registered_service(self, service_address: Address, expiry: int) -> None:
         """Called, when there is a new RegisteredService event on the blockchain."""
