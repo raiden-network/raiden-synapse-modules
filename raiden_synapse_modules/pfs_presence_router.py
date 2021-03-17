@@ -171,6 +171,7 @@ class PFSPresenceRouter:
             web3.eth.getBlock("latest")
         except ExtraDataLengthError:
             from web3.middleware import geth_poa_middleware
+
             web3.middleware_onion.inject(geth_poa_middleware, layer=0)
         return web3
 
@@ -242,5 +243,5 @@ class PFSPresenceRouter:
     def to_local_user(self, address: Address) -> Optional[UserID]:
         """Create a UserID for a local user from a registered service address."""
         log.debug(f"Creating UserID for address {to_checksum_address(address)}")
-        user_id = self._module_api.get_qualified_user_id(to_checksum_address(address))
+        user_id = self._module_api.get_qualified_user_id(str(to_checksum_address(address)).lower())
         return user_id
