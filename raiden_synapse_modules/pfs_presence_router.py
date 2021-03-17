@@ -160,7 +160,7 @@ class PFSPresenceRouter:
         else:
             return set()
 
-    def check_filters(self) -> None:
+    async def check_filters(self) -> None:
         for receipt in self.block_filter.get_new_entries():
             blockhash = cast(HexBytes, receipt)
             self.on_new_block(blockhash)
@@ -171,9 +171,9 @@ class PFSPresenceRouter:
             )
         self.last_update = time.time()
 
-    def send_current_presences_to(self, users: List[UserID]) -> None:
+    async def send_current_presences_to(self, users: List[UserID]) -> None:
         """Send all presences to users."""
-        self._module_api.send_local_online_presence_to(users)
+        await self._module_api.send_local_online_presence_to(users)
 
     def on_registered_service(self, service_address: Address, expiry: int) -> None:
         """Called, when there is a new RegisteredService event on the blockchain."""
