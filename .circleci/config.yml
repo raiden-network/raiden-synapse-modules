@@ -30,7 +30,7 @@ commands:
           name: Install solc
           command: |
             mkdir -p ~/.local/bin
-            curl -L https://github.com/ethereum/solidity/releases/download/v0.6.4/solc-static-linux > ~/.local/bin/solc
+            curl -L https://github.com/ethereum/solidity/releases/download/v0.7.6/solc-static-linux > ~/.local/bin/solc
             chmod +x ~/.local/bin/solc
       - run:
           name: Install additional packages for CI tools

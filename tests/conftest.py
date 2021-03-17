@@ -17,7 +17,6 @@ from raiden_contracts.tests.fixtures.base import (
     web3,
 )
 from raiden_contracts.tests.fixtures.contracts import (
-    deploy_contract,
     deploy_contract_txhash,
     deploy_tester_contract,
 )
