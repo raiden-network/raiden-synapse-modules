@@ -68,7 +68,10 @@ class PFSPresenceRouter:
         self.registered_services: Dict[Address, int] = read_initial_services_addresses(
             self.registry
         )
-        self.next_expiry = min(self.registered_services.values())
+        if len(self.registered_services):
+            self.next_expiry = min(self.registered_services.values())
+        else:
+            self.next_expiry = 0
         self.local_users: List[UserID] = []
         self.update_local_users()
         self.send_current_presences_to(self.local_users)
@@ -187,6 +190,8 @@ class PFSPresenceRouter:
             if local_user is not None:
                 self.local_users.append(local_user)
                 self.send_current_presences_to([local_user])
+        if len(self.registered_services):
+            self.next_expiry = min(self.registered_services.values())
 
     def on_new_block(self, blockhash: HexBytes) -> None:
         """Called, when there is a new Block on the blockchain."""
@@ -194,7 +199,8 @@ class PFSPresenceRouter:
             timestamp: int = self.web3.eth.getBlock(blockhash)["timestamp"]
             if timestamp > self.next_expiry:
                 self.expire_services(timestamp)
-                self.next_expiry = min(self.registered_services.values())
+                if len(self.registered_services):
+                    self.next_expiry = min(self.registered_services.values())
         except BlockNotFound:
             log.debug(f"Block {encode_hex(blockhash)} not found.")
 
