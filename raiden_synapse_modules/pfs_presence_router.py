@@ -51,7 +51,9 @@ class PFSPresenceRouter:
         - on expired services
             - update registered_services
             - recompile local service users
-
+    Question:
+        - how to trigger presence updates at login of registered service?
+        - do online users automatically trigger presence updates over time?
 
     Args:
         config: A configuration object.
