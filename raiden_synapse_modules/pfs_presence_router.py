@@ -236,6 +236,4 @@ class PFSPresenceRouter:
     def to_local_user(self, address: Address) -> Optional[UserID]:
         """Create a UserID for a local user from a registered service address."""
         user_id = self._module_api.get_qualified_user_id(to_checksum_address(address))
-        if self._module_api.check_user_exists(user_id):
-            return user_id
-        return None
+        return user_id
