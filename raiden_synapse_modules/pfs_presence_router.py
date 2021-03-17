@@ -11,7 +11,7 @@ from synapse.handlers.presence import UserPresenceState  # type: ignore
 from synapse.module_api import ModuleApi  # type: ignore
 from synapse.types import UserID  # type: ignore
 from web3 import Web3
-from web3.exceptions import BlockNotFound
+from web3.exceptions import BlockNotFound, ExtraDataLengthError
 
 from raiden_synapse_modules.service_address_listener import (
     install_filters,
@@ -60,8 +60,7 @@ class PFSPresenceRouter:
         self._module_api = module_api
         self._config = config
 
-        provider = Web3.HTTPProvider(self._config.ethereum_rpc)
-        self.web3 = Web3(provider)
+        self.web3 = self.setup_web3()
         self.registry = setup_contract_from_address(
             self._config.service_registry_address, self.web3
         )
@@ -164,6 +163,16 @@ class PFSPresenceRouter:
             return "ALL"
         else:
             return set()
+
+    def setup_web3(self):
+        provider = Web3.HTTPProvider(self._config.ethereum_rpc)
+        web3 = Web3(provider)
+        try:
+            web3.eth.getBlock("latest")
+        except ExtraDataLengthError:
+            from web3.middleware import geth_poa_middleware
+            web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+        return web3
 
     def check_filters(self) -> None:
         log.debug("Checking filters.")
