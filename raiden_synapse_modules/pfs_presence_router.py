@@ -81,6 +81,7 @@ class PFSPresenceRouter:
         self._module_api._hs.get_clock().looping_call(
             self.check_filters, self._config.blockchain_sync * 1000
         )
+        log.debug("Module setup done")
 
     @staticmethod
     def parse_config(config_dict: dict) -> PFSPresenceRouterConfig:
@@ -164,6 +165,7 @@ class PFSPresenceRouter:
             return set()
 
     async def check_filters(self) -> None:
+        log.debug("Checking filters.")
         for receipt in self.block_filter.get_new_entries():
             blockhash = cast(HexBytes, receipt)
             self.on_new_block(blockhash)
@@ -176,11 +178,13 @@ class PFSPresenceRouter:
 
     async def send_current_presences_to(self, users: List[UserID]) -> None:
         """Send all presences to users."""
+        log.debug(f"Sending presences to {len(users)} users")
         await self._module_api.send_local_online_presence_to(users)
 
     def on_registered_service(self, service_address: Address, expiry: int) -> None:
         """Called, when there is a new RegisteredService event on the blockchain."""
         # service_address is already known, update the expiry
+        log.debug("New registered service {to_checksum_address(service_address)}")
         if service_address in self.registered_services:
             self.registered_services[service_address] = expiry
         # new service, add and send current presences
@@ -195,6 +199,7 @@ class PFSPresenceRouter:
 
     def on_new_block(self, blockhash: HexBytes) -> None:
         """Called, when there is a new Block on the blockchain."""
+        log.debug(f"New block {encode_hex(blockhash)}.")
         try:
             timestamp: int = self.web3.eth.getBlock(blockhash)["timestamp"]
             if timestamp > self.next_expiry:
@@ -221,9 +226,11 @@ class PFSPresenceRouter:
             candidate = self.to_local_user(address)
             if candidate is not None:
                 local_users.append(candidate)
+        log.debug(f"Now {len(local_users)} users registered for presence updates.")
         self.local_users = local_users
 
     def to_local_user(self, address: Address) -> Optional[UserID]:
         """Create a UserID for a local user from a registered service address."""
+        log.debug(f"Creating UserID for address {to_checksum_address(address)}")
         user_id = self._module_api.get_qualified_user_id(to_checksum_address(address))
         return user_id
