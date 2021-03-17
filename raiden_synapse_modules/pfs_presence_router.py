@@ -1,18 +1,21 @@
 import logging
+import time
 from collections import defaultdict
-from typing import Dict, Iterable, List, Literal, Optional, Set, Union
+from typing import Dict, Iterable, List, Literal, Optional, Set, Union, cast
 from urllib.parse import urlparse
 
 from eth_typing import Address
-from eth_utils import to_canonical_address, to_checksum_address
+from eth_utils import encode_hex, to_canonical_address, to_checksum_address
 from hexbytes import HexBytes
 from synapse.config import ConfigError  # type: ignore
 from synapse.handlers.presence import UserPresenceState  # type: ignore
 from synapse.module_api import ModuleApi  # type: ignore
 from synapse.types import UserID  # type: ignore
 from web3 import Web3
+from web3.exceptions import BlockNotFound
 
 from raiden_synapse_modules.service_address_listener import (
+    install_filters,
     read_initial_services_addresses,
     setup_contract_from_address,
 )
@@ -71,6 +74,13 @@ class PFSPresenceRouter:
         self.local_users: List[UserID] = []
         self.update_local_users()
         self.send_current_presences_to(self.local_users)
+        block_filter, event_filter = install_filters(self.registry)
+        self.block_filter = block_filter
+        self.event_filter = event_filter
+        self._module_api._hs.clock.looping_call(
+            self.check_filters, self._config.blockchain_sync * 1000
+        )
+        self.last_update = time.time()
 
     @staticmethod
     def parse_config(config_dict: dict) -> PFSPresenceRouterConfig:
@@ -131,6 +141,15 @@ class PFSPresenceRouter:
         for state_update in state_updates:
             for user in self.local_users:
                 destination_users[user].union({state_update})
+        time_since_last_blockchain_sync = time.time() - self.last_update
+        if time_since_last_blockchain_sync > (2 * self._config.blockchain_sync):
+            log.error(
+                f"Last blockchain sync was {time_since_last_blockchain_sync} seconds"
+                "ago, rescheduling sync."
+            )
+            self._module_api._hs.clock.looping_call(
+                self.check_filters, self._config.blockchain_sync * 1000
+            )
         return destination_users
 
     async def get_interested_users(self, user_id: str) -> Union[Set[str], Literal["ALL"]]:
@@ -155,6 +174,17 @@ class PFSPresenceRouter:
         else:
             return set()
 
+    def check_filters(self) -> None:
+        for receipt in self.block_filter.get_new_entries():
+            blockhash = cast(HexBytes, receipt)
+            self.on_new_block(blockhash)
+        for registered_service in self.event_filter.get_new_entries():
+            self.on_registered_service(
+                registered_service.args.service,  # type: ignore
+                registered_service.args.valid_till,  # type: ignore
+            )
+        self.last_update = time.time()
+
     def send_current_presences_to(self, users: List[UserID]) -> None:
         """Send all presences to users."""
         raise NotImplementedError
@@ -174,10 +204,13 @@ class PFSPresenceRouter:
 
     def on_new_block(self, blockhash: HexBytes) -> None:
         """Called, when there is a new Block on the blockchain."""
-        timestamp: int = self.web3.eth.getBlock(blockhash)["timestamp"]
-        if timestamp > self.next_expiry:
-            self.expire_services(timestamp)
-            self.next_expiry = min(self.registered_services.values())
+        try:
+            timestamp: int = self.web3.eth.getBlock(blockhash)["timestamp"]
+            if timestamp > self.next_expiry:
+                self.expire_services(timestamp)
+                self.next_expiry = min(self.registered_services.values())
+        except BlockNotFound:
+            log.debug(f"Block {encode_hex(blockhash)} not found.")
 
     def expire_services(self, timestamp: int) -> None:
         registered_services: Dict[Address, int] = {}
