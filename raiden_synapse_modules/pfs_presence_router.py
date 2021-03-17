@@ -74,6 +74,7 @@ class PFSPresenceRouter:
             self.next_expiry = 0
         self.local_users: List[UserID] = []
         self.update_local_users()
+        # FIXME: this needs an `await`!
         self.send_current_presences_to(self.local_users)
         block_filter, event_filter = install_filters(self.registry)
         self.block_filter = block_filter
