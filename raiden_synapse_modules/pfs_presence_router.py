@@ -165,7 +165,7 @@ class PFSPresenceRouter:
         else:
             return set()
 
-    async def check_filters(self) -> None:
+    def check_filters(self) -> None:
         log.debug("Checking filters.")
         for receipt in self.block_filter.get_new_entries():
             blockhash = cast(HexBytes, receipt)
