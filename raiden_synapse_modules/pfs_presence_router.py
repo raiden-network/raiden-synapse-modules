@@ -78,7 +78,7 @@ class PFSPresenceRouter:
         block_filter, event_filter = install_filters(self.registry)
         self.block_filter = block_filter
         self.event_filter = event_filter
-        self._module_api._hs.clock.looping_call(
+        self._module_api._hs.get_clock().looping_call(
             self.check_filters, self._config.blockchain_sync * 1000
         )
 
