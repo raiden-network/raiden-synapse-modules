@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "raiden-synapse-modules"
-version = "0.0.1"
+version = "0.1.0"
 description = "synapse modules for the Raiden network"
 authors = ["Brainbot Labs Est. <contact@brainbot.li>"]
 license = "MIT"
@@ -8,7 +8,7 @@ keywords = ["raiden", "raiden-network", "synapse", "matrix"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-raiden-contracts = "^0.37.1"
+raiden-contracts = "^0.37.3"
 
 [tool.poetry.dev-dependencies]
 matrix-synapse = { git = "https://github.com/matrix-org/synapse.git", branch = "anoa/presence_hook" }
