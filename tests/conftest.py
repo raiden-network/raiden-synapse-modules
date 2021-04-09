@@ -1,7 +1,7 @@
-from typing import Callable
+from typing import Callable, Literal
 
 import pytest
-from eth_tester import EthereumTester  # type: ignore
+from eth_tester import EthereumTester
 from eth_typing import Address
 from web3.contract import Contract
 from web3.types import TxParams
@@ -27,7 +27,7 @@ from raiden_contracts.tests.utils.contracts import call_and_transact
 
 
 @pytest.fixture(name="number_of_services", scope="function")
-def three():
+def three() -> Literal[3]:
     return 3
 
 
@@ -45,9 +45,7 @@ def service_registry_with_deposits(
 
 
 def register_service(
-    service_registry: Contract,  # noqa: F811
-    token: Contract,
-    account: Address
+    service_registry: Contract, token: Contract, account: Address  # noqa: F811
 ) -> None:
     sender: TxParams = {"from": account}
     call_and_transact(token.functions.mint(SERVICE_DEPOSIT), sender)
@@ -56,6 +54,6 @@ def register_service(
 
 
 @pytest.fixture(name="blockchain")
-def blockchain():
+def blockchain() -> EthereumTester:
     chain = EthereumTester()
     return chain

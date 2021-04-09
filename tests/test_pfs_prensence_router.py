@@ -1,6 +1,6 @@
 import pytest
 from eth_utils import to_checksum_address
-from synapse.config import ConfigError  # type: ignore
+from synapse.config import ConfigError
 
 from raiden_synapse_modules.pfs_presence_router import PFSPresenceRouter
 

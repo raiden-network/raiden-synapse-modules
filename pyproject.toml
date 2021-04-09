@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "raiden-synapse-modules"
-version = "0.1.0"
+version = "0.1.1"
 description = "synapse modules for the Raiden network"
 authors = ["Brainbot Labs Est. <contact@brainbot.li>"]
 license = "MIT"
 keywords = ["raiden", "raiden-network", "synapse", "matrix"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.9"
 raiden-contracts = "^0.37.3"
 
 [tool.poetry.dev-dependencies]

@@ -1,15 +1,18 @@
 import logging
 import time
+from dataclasses import dataclass
+from enum import Enum
 from typing import Dict, Iterable, List, Literal, Optional, Set, Union, cast
 from urllib.parse import urlparse
 
 from eth_typing import Address
 from eth_utils import encode_hex, to_canonical_address, to_checksum_address
 from hexbytes import HexBytes
-from synapse.config import ConfigError  # type: ignore
-from synapse.handlers.presence import UserPresenceState  # type: ignore
-from synapse.module_api import ModuleApi  # type: ignore
-from synapse.types import UserID  # type: ignore
+from synapse.config import ConfigError
+from synapse.handlers.presence import UserPresenceState
+from synapse.metrics.background_process_metrics import run_as_background_process
+from synapse.module_api import ModuleApi
+from synapse.types import UserID
 from web3 import Web3
 from web3.exceptions import BlockNotFound, ExtraDataLengthError
 
@@ -22,12 +25,17 @@ from raiden_synapse_modules.service_address_listener import (
 log = logging.getLogger(__name__)
 
 
+class WorkerType(Enum):
+    MAIN = None
+    FEDERATION_SENDER = "synapse.app.federation_sender"
+    OTHER = "_other"
+
+
+@dataclass
 class PFSPresenceRouterConfig:
-    def __init__(self):
-        # Config options
-        self.service_registry_address: Address
-        self.ethereum_rpc: str
-        self.blockchain_sync: int
+    service_registry_address: Address
+    ethereum_rpc: str
+    blockchain_sync: int
 
 
 class PFSPresenceRouter:
@@ -57,8 +65,8 @@ class PFSPresenceRouter:
     """
 
     def __init__(self, config: PFSPresenceRouterConfig, module_api: ModuleApi):
-        self._module_api = module_api
-        self._config = config
+        self._module_api: ModuleApi = module_api
+        self._config: PFSPresenceRouterConfig = config
 
         self.web3 = self.setup_web3()
         self.registry = setup_contract_from_address(
@@ -73,8 +81,14 @@ class PFSPresenceRouter:
             self.next_expiry = 0
         self.local_users: List[UserID] = []
         self.update_local_users()
-        # FIXME: this needs an `await`!
-        self.send_current_presences_to(self.local_users)
+        if self.worker_type is WorkerType.FEDERATION_SENDER:
+            # The initial presence update only needs to be sent from within the
+            # `federation_sender` worker process
+            run_as_background_process(
+                "pfs_presence_router_send_current_presences_on_init",
+                self.send_current_presences_to,
+                self.local_users,
+            )
         block_filter, event_filter = install_filters(self.registry)
         self.block_filter = block_filter
         self.event_filter = event_filter
@@ -82,6 +96,14 @@ class PFSPresenceRouter:
             self.check_filters, self._config.blockchain_sync * 1000
         )
         log.debug("Module setup done")
+
+    @property
+    def worker_type(self) -> WorkerType:
+        """Return the type of worker we're running in"""
+        try:
+            return WorkerType(self._module_api._hs.config.worker_app)
+        except ValueError:
+            return WorkerType.OTHER
 
     @staticmethod
     def parse_config(config_dict: dict) -> PFSPresenceRouterConfig:
@@ -164,7 +186,7 @@ class PFSPresenceRouter:
         else:
             return set()
 
-    def setup_web3(self):
+    def setup_web3(self) -> Web3:
         provider = Web3.HTTPProvider(self._config.ethereum_rpc)
         web3 = Web3(provider)
         try:
@@ -204,7 +226,14 @@ class PFSPresenceRouter:
             local_user = self.to_local_user(service_address)
             if local_user is not None:
                 self.local_users.append(local_user)
-                self.send_current_presences_to([local_user])
+                if self.worker_type is WorkerType.FEDERATION_SENDER:
+                    # The initial presence update only needs to be sent from within the
+                    # `federation_sender` worker process
+                    run_as_background_process(
+                        "pfs_presence_router_send_current_presences_new_service",
+                        self.send_current_presences_to,
+                        [local_user],
+                    )
         if len(self.registered_services):
             self.next_expiry = min(self.registered_services.values())
 
