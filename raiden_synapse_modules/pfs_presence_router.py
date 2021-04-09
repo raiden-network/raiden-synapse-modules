@@ -116,34 +116,29 @@ class PFSPresenceRouter:
         Returns:
             A validated config object.
         """
-        # Initialise a typed config object
-        config = PFSPresenceRouterConfig()  # type: ignore
-        service_registry_address = config_dict.get("service_registry_address")
-        ethereum_rpc = config_dict.get("ethereum_rpc")
-        blockchain_sync = config_dict.get("blockchain_sync_seconds", "15")
         try:
-            config.blockchain_sync = int(blockchain_sync)
+            blockchain_sync = int(config_dict.get("blockchain_sync_seconds", "15"))
         except ValueError:
             raise ConfigError("`blockchain_sync_seconds` needs to be an integer")
 
-        if service_registry_address is None:
-            raise ConfigError("`service_registry_address` not properly configured")
-        else:
-            try:
-                config.service_registry_address = to_canonical_address(
-                    to_checksum_address(service_registry_address)
-                )
-            except ValueError:
-                raise ConfigError("`service_registry_address` is not a valid address")
-        if ethereum_rpc is None:
-            raise ConfigError("`ethereum_rpc` not properly configured")
-        parsed = urlparse(ethereum_rpc)
-        if not all([parsed.scheme, parsed.netloc]):
-            raise ConfigError("`ethereum_rpc` is not properly configured")
-        else:
-            config.ethereum_rpc = ethereum_rpc
+        try:
+            service_registry_address = to_canonical_address(
+                to_checksum_address(config_dict.get("service_registry_address"))  # type: ignore
+            )
+        except (TypeError, ValueError):
+            raise ConfigError("`service_registry_address` is not a valid address or missing")
 
-        return config
+        try:
+            ethereum_rpc = config_dict.get("ethereum_rpc")
+            parsed_ethereum_rpc = urlparse(ethereum_rpc)
+            if not all([parsed_ethereum_rpc.scheme, parsed_ethereum_rpc.netloc]):
+                raise ValueError()
+        except ValueError:
+            raise ConfigError("`ethereum_rpc` is not properly configured")
+
+        return PFSPresenceRouterConfig(
+            service_registry_address, ethereum_rpc, blockchain_sync  # type: ignore
+        )
 
     async def get_users_for_states(
         self,
