@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "raiden-synapse-modules"
-version = "0.1.2"
+version = "0.1.3"
 description = "synapse modules for the Raiden network"
 authors = ["Brainbot Labs Est. <contact@brainbot.li>"]
 license = "MIT"
