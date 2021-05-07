@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 from eth_typing import Address
 from eth_utils import encode_hex, to_canonical_address, to_checksum_address
 from hexbytes import HexBytes
+from requests.exceptions import ReadTimeout
 from synapse.config import ConfigError
 from synapse.handlers.presence import UserPresenceState
 from synapse.metrics.background_process_metrics import run_as_background_process
@@ -194,10 +195,17 @@ class PFSPresenceRouter:
 
     def check_filters(self) -> None:
         log.debug("Checking filters.")
-        for receipt in self.block_filter.get_new_entries():
+        try:
+            receipts = self.block_filter.get_new_entries()
+            registered_services = self.event_filter.get_new_entries()
+        except ReadTimeout:
+            log.error("Connection error: timeout")
+            return
+
+        for receipt in receipts:
             blockhash = cast(HexBytes, receipt)
             self.on_new_block(blockhash)
-        for registered_service in self.event_filter.get_new_entries():
+        for registered_service in registered_services:
             self.on_registered_service(
                 registered_service.args.service,  # type: ignore
                 registered_service.args.valid_till,  # type: ignore
