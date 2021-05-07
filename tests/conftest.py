@@ -5,6 +5,7 @@ from eth_tester import EthereumTester
 from eth_typing import Address
 from web3.contract import Contract
 from web3.types import TxParams
+from web3 import Web3
 
 from raiden_contracts.tests.fixtures.base import (
     auto_revert_chain,
@@ -16,6 +17,8 @@ from raiden_contracts.tests.fixtures.base import (
     patch_genesis_gas_limit,
     web3,
 )
+from raiden_synapse_modules.pfs_presence_router import PFSPresenceRouter
+from unittest.mock import MagicMock, patch
 from raiden_contracts.tests.fixtures.contracts import (
     deploy_contract_txhash,
     deploy_tester_contract,
@@ -57,3 +60,20 @@ def register_service(
 def blockchain() -> EthereumTester:
     chain = EthereumTester()
     return chain
+
+
+@pytest.fixture(name="presence_router", scope="function")
+def presence_router(
+    web3: Web3, service_registry_with_deposits: Contract  # noqa: F811
+) -> PFSPresenceRouter:  # noqa: F811
+    config = PFSPresenceRouter.parse_config(
+        {
+            "service_registry_address": f"{service_registry_with_deposits.address}",
+            "ethereum_rpc": "http://foo.bar",
+        }
+    )
+    with patch(
+        "raiden_synapse_modules.pfs_presence_router.PFSPresenceRouter.setup_web3",
+        return_value=web3,
+    ):
+        return PFSPresenceRouter(config, MagicMock())
