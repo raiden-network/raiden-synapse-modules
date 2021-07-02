@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "raiden-synapse-modules"
-version = "0.1.3"
+version = "0.2.0rc1"
 description = "synapse modules for the Raiden network"
 authors = ["Brainbot Labs Est. <contact@brainbot.li>"]
 license = "MIT"
@@ -9,6 +9,7 @@ keywords = ["raiden", "raiden-network", "synapse", "matrix"]
 [tool.poetry.dependencies]
 python = "^3.9"
 raiden-contracts = "^0.37.3"
+coincurve = "^15.0.0"
 
 [tool.poetry.dev-dependencies]
 matrix-synapse = "1.37.1"
@@ -44,7 +45,7 @@ use_parentheses = true
 
 [tool.black]
 line-length = 99
-target-version = ['py37']
+target-version = ['py39']
 include = '\.pyi?$'
 exclude = '''
 /(
