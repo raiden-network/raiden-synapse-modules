@@ -1,11 +1,14 @@
+# pylint: disable=unused-import
+
 from typing import Callable, Literal
+from unittest.mock import MagicMock, patch
 
 import pytest
 from eth_tester import EthereumTester
 from eth_typing import Address
+from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxParams
-from web3 import Web3
 
 from raiden_contracts.tests.fixtures.base import (
     auto_revert_chain,
@@ -17,8 +20,6 @@ from raiden_contracts.tests.fixtures.base import (
     patch_genesis_gas_limit,
     web3,
 )
-from raiden_synapse_modules.pfs_presence_router import PFSPresenceRouter
-from unittest.mock import MagicMock, patch
 from raiden_contracts.tests.fixtures.contracts import (
     deploy_contract_txhash,
     deploy_tester_contract,
@@ -27,6 +28,7 @@ from raiden_contracts.tests.fixtures.service_registry_fixtures import service_re
 from raiden_contracts.tests.fixtures.token import custom_token, custom_token_factory, token_args
 from raiden_contracts.tests.utils.constants import SERVICE_DEPOSIT
 from raiden_contracts.tests.utils.contracts import call_and_transact
+from raiden_synapse_modules.presence_router.pfs import PFSPresenceRouter
 
 
 @pytest.fixture(name="number_of_services", scope="function")
@@ -73,7 +75,7 @@ def presence_router(
         }
     )
     with patch(
-        "raiden_synapse_modules.pfs_presence_router.PFSPresenceRouter.setup_web3",
+        "raiden_synapse_modules.presence_router.pfs.PFSPresenceRouter.setup_web3",
         return_value=web3,
     ):
         return PFSPresenceRouter(config, MagicMock())

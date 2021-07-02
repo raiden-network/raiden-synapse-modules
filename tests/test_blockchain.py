@@ -4,7 +4,7 @@ import pytest
 from web3 import Web3
 from web3.contract import Contract
 
-from raiden_synapse_modules.service_address_listener import (
+from raiden_synapse_modules.presence_router.blockchain_support import (
     read_initial_services_addresses,
     setup_contract_from_address,
     install_filters,
