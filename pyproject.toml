@@ -11,7 +11,7 @@ python = "^3.9"
 raiden-contracts = "^0.37.3"
 
 [tool.poetry.dev-dependencies]
-matrix-synapse = { git = "https://github.com/matrix-org/synapse.git", branch = "anoa/presence_hook" }
+matrix-synapse = "1.37.1"
 black = ""
 coverage = "^5.3"
 codecov = "^2.1.9"
