@@ -11,13 +11,12 @@ from hexbytes import HexBytes
 from requests.exceptions import ReadTimeout
 from synapse.config import ConfigError
 from synapse.handlers.presence import UserPresenceState
-from synapse.metrics.background_process_metrics import run_as_background_process
-from synapse.module_api import ModuleApi
+from synapse.module_api import ModuleApi, run_in_background
 from synapse.types import UserID
 from web3 import Web3
 from web3.exceptions import BlockNotFound, ExtraDataLengthError
 
-from raiden_synapse_modules.service_address_listener import (
+from raiden_synapse_modules.presence_router.blockchain_support import (
     install_filters,
     read_initial_services_addresses,
     setup_contract_from_address,
@@ -85,8 +84,7 @@ class PFSPresenceRouter:
         if self.worker_type is WorkerType.FEDERATION_SENDER:
             # The initial presence update only needs to be sent from within the
             # `federation_sender` worker process
-            run_as_background_process(
-                "pfs_presence_router_send_current_presences_on_init",
+            run_in_background(
                 self.send_current_presences_to,
                 self.local_users,
             )
@@ -232,8 +230,7 @@ class PFSPresenceRouter:
                 if self.worker_type is WorkerType.FEDERATION_SENDER:
                     # The initial presence update only needs to be sent from within the
                     # `federation_sender` worker process
-                    run_as_background_process(
-                        "pfs_presence_router_send_current_presences_new_service",
+                    run_in_background(
                         self.send_current_presences_to,
                         [local_user],
                     )

@@ -1,12 +1,11 @@
-import pytest
-from requests.exceptions import ReadTimeout
 from unittest.mock import MagicMock
 
+import pytest
 from eth_utils import to_checksum_address
+from requests.exceptions import ReadTimeout
 from synapse.config import ConfigError
 
-from raiden_synapse_modules.pfs_presence_router import PFSPresenceRouter
-from web3.contract import Contract
+from raiden_synapse_modules.presence_router.pfs import PFSPresenceRouter
 
 
 def test_parse_config() -> None:
