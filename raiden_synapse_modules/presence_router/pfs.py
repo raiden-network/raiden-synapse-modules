@@ -177,8 +177,7 @@ class PFSPresenceRouter:
         """
         if user_id in self.local_users:
             return "ALL"
-        else:
-            return set()
+        return set()
 
     def setup_web3(self) -> Web3:
         provider = Web3.HTTPProvider(self._config.ethereum_rpc)
@@ -193,11 +192,14 @@ class PFSPresenceRouter:
 
     def check_filters(self) -> None:
         log.debug("Checking filters.")
+        start = time.time()
         try:
             receipts = self.block_filter.get_new_entries()
             registered_services = self.event_filter.get_new_entries()
         except ReadTimeout:
-            log.error("Connection error: timeout")
+            end = time.time()
+            elapsed_time = end - start
+            log.error(f"Connection error: timeout after {elapsed_time} seconds")
             return
 
         for receipt in receipts:
@@ -208,12 +210,19 @@ class PFSPresenceRouter:
                 registered_service.args.service,  # type: ignore
                 registered_service.args.valid_till,  # type: ignore
             )
+        end = time.time()
+        elapsed_time = end - start
         self.last_update = time.time()
+        log.info(f"Filters checked in {elapsed_time} seconds")
 
     async def send_current_presences_to(self, users: List[UserID]) -> None:
         """Send all presences to users."""
+        start = time.time()
         log.debug(f"Sending presences to {len(users)} users")
         await self._module_api.send_local_online_presence_to(users)
+        end = time.time()
+        elapsed_time = end - start
+        log.info(f"Presences updated in {elapsed_time} seconds")
 
     def on_registered_service(self, service_address: Address, expiry: int) -> None:
         """Called, when there is a new RegisteredService event on the blockchain."""
