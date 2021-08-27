@@ -19,3 +19,8 @@ presence:
 where
 - `ETH_RPC` points to a valid ethereum rpc resource
 - `SERVICE_REGISTRY` is the hex address of a `raiden_contracts` `ServiceRegistry.sol` deployment
+
+
+### Publishing a new release
+
+After bumping the version on [pyproject.toml](pyproject.toml), run `make publish`
