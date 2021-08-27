@@ -1,4 +1,5 @@
 import logging
+import threading
 import time
 from dataclasses import dataclass
 from enum import Enum
@@ -91,9 +92,8 @@ class PFSPresenceRouter:
         block_filter, event_filter = install_filters(self.registry)
         self.block_filter = block_filter
         self.event_filter = event_filter
-        self._module_api._hs.get_clock().looping_call(
-            self.check_filters, self._config.blockchain_sync * 1000
-        )
+        thread = threading.Thread(target=self._check_filters, name="_check_filters")
+        thread.start()
         log.debug("Module setup done")
 
     @property
@@ -190,7 +190,12 @@ class PFSPresenceRouter:
             web3.middleware_onion.inject(geth_poa_middleware, layer=0)
         return web3
 
-    def check_filters(self) -> None:
+    def _check_filters(self) -> None:
+        while True:
+            self._check_filters_once()
+            time.sleep(self._config.blockchain_sync)
+
+    def _check_filters_once(self) -> None:
         log.debug("Checking filters.")
         start = time.time()
         try:
