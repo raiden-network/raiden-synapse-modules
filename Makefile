@@ -33,6 +33,9 @@ install: have-poetry
 install-dev: have-poetry
 	poetry install
 
+publish:
+	poetry publish --build
+
 format: style
 
 lint: mypy flake8 pylint black-check isort-check
