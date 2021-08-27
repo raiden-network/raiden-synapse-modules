@@ -195,9 +195,13 @@ class PFSPresenceRouter:
         start = time.time()
         try:
             receipts = self.block_filter.get_new_entries()
+            log.info(f"Got new block entries in {time.time() - start} seconds")
             registered_services = self.event_filter.get_new_entries()
+            log.info(f"Got new event entries in {time.time() - start} seconds")
         except ReadTimeout:
-            log.error(f"Connection error: timeout after {time.time() - start} seconds")
+            log.error(
+                f"Connection error: check_filters timeout after {time.time() - start} seconds"
+            )
             return
 
         for receipt in receipts:
@@ -243,13 +247,16 @@ class PFSPresenceRouter:
     def on_new_block(self, blockhash: HexBytes) -> None:
         """Called, when there is a new Block on the blockchain."""
         log.debug(f"New block {encode_hex(blockhash)}.")
+        start = time.time()
         try:
             timestamp: int = self.web3.eth.getBlock(blockhash)["timestamp"]
+            log.info(f"getBlock finished in {time.time() - start} seconds")
             if timestamp > self.next_expiry:
                 self.expire_services(timestamp)
                 if len(self.registered_services):
                     self.next_expiry = min(self.registered_services.values())
         except BlockNotFound:
+            log.error(f"getBlock failed after {time.time() - start} seconds")
             log.debug(f"Block {encode_hex(blockhash)} not found.")
 
     def expire_services(self, timestamp: int) -> None:
