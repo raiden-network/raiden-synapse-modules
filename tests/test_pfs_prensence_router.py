@@ -42,6 +42,6 @@ def test_handle_eth_connection_timeout(presence_router: PFSPresenceRouter) -> No
     presence_router.block_filter = MagicMock()
     presence_router.block_filter.get_new_entries = MagicMock(side_effect=ReadTimeout)
     try:
-        presence_router.check_filters()
+        presence_router._check_filters_once()
     except ReadTimeout:
         pytest.fail("Unexpected ReadTimeout")
