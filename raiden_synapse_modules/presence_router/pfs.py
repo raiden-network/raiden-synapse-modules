@@ -17,6 +17,9 @@ from synapse.types import UserID
 from web3 import Web3
 from web3.exceptions import BlockNotFound, ExtraDataLengthError
 
+from raiden_contracts.constants import CONTRACT_SERVICE_REGISTRY, CONTRACTS_VERSION
+from raiden_contracts.contract_manager import get_contracts_deployment_info
+from raiden_contracts.utils.type_aliases import ChainID
 from raiden_synapse_modules.presence_router.blockchain_support import (
     install_filters,
     read_initial_services_addresses,
@@ -34,7 +37,7 @@ class WorkerType(Enum):
 
 @dataclass
 class PFSPresenceRouterConfig:
-    service_registry_address: Address
+    service_registry_address: Optional[Address]
     ethereum_rpc: str
     blockchain_sync: int
 
@@ -70,9 +73,22 @@ class PFSPresenceRouter:
         self._config: PFSPresenceRouterConfig = config
 
         self.web3 = self.setup_web3()
-        self.registry = setup_contract_from_address(
-            self._config.service_registry_address, self.web3
-        )
+
+        service_registry_address = self._config.service_registry_address
+        if service_registry_address is None:
+            chain_id = ChainID(self.web3.eth.chain_id)
+            deployment_data = get_contracts_deployment_info(
+                chain_id=chain_id,
+                version=CONTRACTS_VERSION,
+            )
+            assert (
+                deployment_data is not None
+            ), f"Could not load deployment data for chain {chain_id}"
+            service_registry_address = to_canonical_address(
+                deployment_data["contracts"][CONTRACT_SERVICE_REGISTRY]["address"]
+            )
+
+        self.registry = setup_contract_from_address(service_registry_address, self.web3)
         self.registered_services: Dict[Address, int] = read_initial_services_addresses(
             self.registry
         )
@@ -120,12 +136,14 @@ class PFSPresenceRouter:
         except ValueError:
             raise ConfigError("`blockchain_sync_seconds` needs to be an integer")
 
-        try:
-            service_registry_address = to_canonical_address(
-                to_checksum_address(config_dict.get("service_registry_address"))  # type: ignore
-            )
-        except (TypeError, ValueError):
-            raise ConfigError("`service_registry_address` is not a valid address or missing")
+        service_registry_address = config_dict.get("service_registry_address")
+        if service_registry_address is not None:
+            try:
+                service_registry_address = to_canonical_address(
+                    to_checksum_address(service_registry_address)
+                )
+            except (TypeError, ValueError):
+                raise ConfigError("`service_registry_address` is not a valid address")
 
         try:
             ethereum_rpc = config_dict.get("ethereum_rpc")
