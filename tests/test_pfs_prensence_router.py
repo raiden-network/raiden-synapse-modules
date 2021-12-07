@@ -21,6 +21,7 @@ def test_parse_config() -> None:
             "ethereum_rpc": "http://foo.bar",
         }
     )
+    assert config.service_registry_address is not None
     assert (
         to_checksum_address(config.service_registry_address)
         == "0x1234567890123456789012345678901234567890"

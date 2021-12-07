@@ -4,6 +4,8 @@ synapse extensions for raiden
 ## PFSPresenceRouter
 
 For `PFSPresenceRouter` configuration, add this to your `homeserver.yaml`:
+`service_registry_address` is optional and will be chose automatically based on
+the chain id the RSB is running on if not provided.
 
 ```
 presence:
