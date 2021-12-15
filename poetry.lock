@@ -866,7 +866,7 @@ dmypy = ["psutil (>=4.0)"]
 name = "mypy-extensions"
 version = "0.4.3"
 description = "Experimental type system extensions for programs checked with the mypy typechecker."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -1224,7 +1224,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [[package]]
 name = "raiden-contracts"
-version = "0.40.0"
+version = "0.40.1"
 description = "Raiden contracts library and utilities"
 category = "main"
 optional = false
@@ -1236,6 +1236,7 @@ coincurve = ">=8.0.0"
 eth-abi = ">=2.0.0,<3.0.0"
 eth-typing = ">=2.2.1,<4.0.0"
 eth-utils = ">=1.8.4,<3.0.0"
+mypy-extensions = ">0.4.0,<0.5.0"
 py-solc-x = "*"
 rlp = ">=1.0.0"
 semantic-version = ">=2.8"
@@ -1590,7 +1591,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "9b9dd4a409b7754722a176ce96e01a8558036cc05c51e562d14d7fa4d1d6ea0b"
+content-hash = "ea3ff8d94b81afe24a9346223a11c6385d695ca97f99839a081d4fa0e084e61d"
 
 [metadata.files]
 aiohttp = [
@@ -2668,8 +2669,8 @@ pyyaml = [
     {file = "PyYAML-5.4.1.tar.gz", hash = "sha256:607774cbba28732bfa802b54baa7484215f530991055bb562efbed5b2f20a45e"},
 ]
 raiden-contracts = [
-    {file = "raiden-contracts-0.40.0.tar.gz", hash = "sha256:51b1b43d7917f7d925e5fb497a20d02429b38d2b7c92e2e06805c63fded2ac9e"},
-    {file = "raiden_contracts-0.40.0-py3-none-any.whl", hash = "sha256:f9aa52cf4a58fda64f4f87a9c201b224cd82a5b833ebe60e2b6e3773c46240a9"},
+    {file = "raiden-contracts-0.40.1.tar.gz", hash = "sha256:73ffaf61956464b4a325dd9e717660f13da9a10226595f0cff44c94f3b7708b7"},
+    {file = "raiden_contracts-0.40.1-py3-none-any.whl", hash = "sha256:88cf35813216c89943d7b137381164c19c0ae26e5c4fd69e27f8a459b692a4f3"},
 ]
 regex = [
     {file = "regex-2021.7.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:494d0172774dc0beeea984b94c95389143db029575f7ca908edd74469321ea99"},
