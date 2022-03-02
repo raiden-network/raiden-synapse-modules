@@ -11,7 +11,7 @@ the chain id the RSB is running on if not provided.
 presence:
     enabled: true
     presence_router:
-      module: raiden_synapse_modules.pfs_presence_router.PFSPresenceRouter
+      module: raiden_synapse_modules.presence_router.pfs.PFSPresenceRouter
       config:
         ethereum_rpc: ${ETH_RPC}
         service_registry_address: ${SERVICE_REGISTRY}
