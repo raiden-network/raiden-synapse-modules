@@ -1224,7 +1224,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [[package]]
 name = "raiden-contracts"
-version = "1.0.0rc2"
+version = "1.0.0rc3"
 description = "Raiden contracts library and utilities"
 category = "main"
 optional = false
@@ -1246,8 +1246,8 @@ web3 = "5.26.0"
 [package.source]
 type = "git"
 url = "https://github.com/raiden-network/raiden-contracts"
-reference = "v1.0.0rc2"
-resolved_reference = "c4167bbdfb6418a5bc5d1ddafcee1f11bb12e82f"
+reference = "v1.0.0rc4"
+resolved_reference = "12b54c174985e4d08c6138cf5bce720d88272886"
 
 [[package]]
 name = "regex"
@@ -1598,7 +1598,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "7f19388016028b3d212b19b835feab4e19dcaf13573e37c1df9bbbff671925f7"
+content-hash = "da99ef687ceca634c4c755ee5e88b9b63ee2923b0f68306fdcb7ff89645e19e7"
 
 [metadata.files]
 aiohttp = [
