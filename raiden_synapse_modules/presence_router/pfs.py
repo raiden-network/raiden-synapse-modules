@@ -105,9 +105,6 @@ class PFSPresenceRouter:
                 self.send_current_presences_to,
                 self.local_users,
             )
-        block_filter, event_filter = install_filters(self.registry)
-        self.block_filter = block_filter
-        self.event_filter = event_filter
         thread = threading.Thread(target=self._check_filters, name="_check_filters")
         thread.start()
         log.debug("Module setup done")
@@ -208,10 +205,26 @@ class PFSPresenceRouter:
             web3.middleware_onion.inject(geth_poa_middleware, layer=0)
         return web3
 
+    def _setup_filters(self) -> None:
+        block_filter, event_filter = install_filters(self.registry)
+        self.block_filter = block_filter
+        self.event_filter = event_filter
+
     def _check_filters(self) -> None:
+        self._setup_filters()
+
         while True:
-            self._check_filters_once()
-            time.sleep(self._config.blockchain_sync)
+            try:
+                self._check_filters_once()
+                time.sleep(self._config.blockchain_sync)
+
+            except ValueError as err:
+                if "filter not found" in str(err):
+                    log.info("Filter got dropped by node. Renewing them.")
+                    self._check_filters()
+
+                else:
+                    raise err
 
     def _check_filters_once(self) -> None:
         log.debug("Checking filters.")
