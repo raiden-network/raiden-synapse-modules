@@ -8,7 +8,7 @@ keywords = ["raiden", "raiden-network", "synapse", "matrix"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-raiden-contracts = "^0.40.1"
+raiden-contracts = "^0.50.1"
 coincurve = "^15.0.0"
 
 [tool.poetry.dev-dependencies]
