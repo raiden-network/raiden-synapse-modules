@@ -4,7 +4,7 @@ executors:
   default-executor:
     working_directory: /home/circleci/ci/raiden-synapse-modules
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.9
     environment:
       PROJECT_ROOT: /home/circleci/ci/raiden-synapse-modules
       CI_CONFIG_DIR: /home/circleci/ci/raiden-synapse-modules/.circleci
